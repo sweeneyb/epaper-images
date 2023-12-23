@@ -3,11 +3,13 @@ go mod tidy
 go run main.go
 
 ```
-This builds an image and serves it via the go file server.
+This builds an image and serves it via the go file server. Intended to be consumed by https://github.com/sweeneyb/png-to-epaper
 
 Sample curl:
-```curl -i -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://192.168.3.148:8090/static/go-black.bmp'```
-```curl -i --head -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://192.168.3.148:8090/static/go-black.bmp'```
+
+```curl -i -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://localhost:8090/static/go-black.bmp'```
+
+```curl -i --head -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://localhost:8090/static/go-black.bmp'```
 
 ## Issues:
 ???
