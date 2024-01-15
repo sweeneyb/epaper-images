@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"os"
 
-	"golang.org/x/image/bmp"
-
 	"github.com/flopp/go-findfont"
 	"github.com/fogleman/gg"
 )
@@ -30,129 +28,153 @@ func headers(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func createImages() {
+// func createImages() {
+// 	newWidth, newHeight := 800, 480
+// 	// newWidth, newHeight := 210, 120
+// 	blackImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+// 	redImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+// 	// blackImage := image.NewPaletted(image.Rect(0, 0, newWidth, newHeight), color.Palette{
+// 	// 	color.RGBA{255, 0, 0, 255},     // Red
+// 	// 	color.RGBA{0, 255, 0, 255},     // Green
+// 	// 	color.RGBA{0, 0, 255, 255},     // Blue
+// 	// 	color.RGBA{0, 0, 0, 255},       // White
+// 	// 	color.RGBA{255, 255, 255, 255}, // Black
+// 	// })
+// 	// blackImage := image.NewPaletted(image.Rect(0, 0, newWidth, newHeight), palette.WebSafe)
+// 	// draw.Draw(blackImage, blackImage.Bounds(), &image.Uniform{color.RGBA{255, 255, 255, 255}}, image.Point{}, draw.Src)
+// 	// addLabel(blackImage, 10, 10, "Hello, image!")
+
+// 	fontPath, err := findfont.Find("arial.ttf")
+
+// 	// dc := gg.NewContext(840, 480)
+// 	dc := gg.NewContextForImage(blackImage)
+// 	dc.SetRGB(1, 1, 1)
+// 	dc.Clear()
+// 	dc.SetRGB(0, 0, 0)
+// 	if err := dc.LoadFontFace(fontPath, 96); err != nil {
+// 		panic(err)
+// 	}
+// 	dc.DrawStringAnchored("On Air!!", float64(newWidth/2), float64(newHeight/2), 0.5, 0.5)
+
+// 	dc.SetRGB(0, 0, 0)
+// 	// left
+// 	// dc.DrawRectangle(0, 0, 20, float64(newHeight))
+// 	// dc.Fill()
+// 	// //top
+// 	// dc.DrawRectangle(0, 0, float64(newWidth), 20)
+// 	// dc.Fill()
+// 	// //right
+// 	// dc.DrawRectangle(float64(newWidth-20), 0, 20, float64(newHeight))
+// 	// dc.Fill()
+// 	// //bottom
+// 	// dc.DrawRectangle(0, float64(newHeight-20), float64(newWidth), 20)
+// 	// dc.Fill()
+// 	dc.DrawImage(blackImage, 0, 0)
+// 	dc.Clip()
+// 	resultImage := dc.Image()
+
+// 	outputFile, err := os.Create("output/go-black3.bmp")
+// 	if err != nil {
+// 		fmt.Println("Error creating output file:", err)
+// 		return
+// 	}
+// 	defer outputFile.Close()
+// 	err = bmp.Encode(outputFile, resultImage)
+// 	if err != nil {
+// 		fmt.Println("Error encoding output image:", err)
+// 		return
+// 	}
+
+// 	outputFile, err = os.Create("output/go-black3.png")
+// 	if err != nil {
+// 		fmt.Println("Error creating output file:", err)
+// 		return
+// 	}
+// 	err = png.Encode(outputFile, resultImage)
+// 	if err != nil {
+// 		fmt.Println("Error encoding output image:", err)
+// 		return
+// 	}
+
+// 	dc = gg.NewContextForImage(redImage)
+// 	dc.SetRGB(1, 1, 1)
+// 	dc.Clear()
+// 	dc.SetRGB(0, 0, 0)
+// 	// left
+// 	dc.DrawRectangle(0, 0, 20, float64(newHeight))
+// 	dc.Fill()
+// 	//top
+// 	dc.DrawRectangle(0, 0, float64(newWidth), 20)
+// 	dc.Fill()
+// 	//right
+// 	dc.DrawRectangle(float64(newWidth-20), 0, 20, float64(newHeight))
+// 	dc.Fill()
+// 	//bottom
+// 	dc.DrawRectangle(0, float64(newHeight-20), float64(newWidth), 20)
+// 	dc.Fill()
+// 	dc.DrawImage(blackImage, 0, 0)
+// 	dc.Clip()
+// 	resultImage = dc.Image()
+
+// 	outputFile, err = os.Create("output/go-red3.png")
+// 	if err != nil {
+// 		fmt.Println("Error creating output file:", err)
+// 		return
+// 	}
+// 	err = png.Encode(outputFile, resultImage)
+// 	if err != nil {
+// 		fmt.Println("Error encoding output image:", err)
+// 		return
+// 	}
+
+// 	result := image.NewGray(resultImage.Bounds())
+// 	draw.Draw(result, result.Bounds(), resultImage, resultImage.Bounds().Min, draw.Src)
+
+// 	for y := result.Bounds().Min.Y; y < result.Bounds().Max.Y; y++ {
+// 		for x := result.Bounds().Min.X; x < result.Bounds().Max.X; x++ {
+// 			result.At(x, y)
+// 			// fmt.Print(result.At(x, y))
+// 		}
+// 	}
+// 	fmt.Println("")
+
+// 	outputFile, err = os.Create("output/go-red-grey1.png")
+// 	if err != nil {
+// 		fmt.Println("Error creating output file:", err)
+// 		return
+// 	}
+// 	err = png.Encode(outputFile, result)
+// 	if err != nil {
+// 		fmt.Println("Error encoding output image:", err)
+// 		return
+// 	}
+// }
+
+func createRedImageData() image.Image {
 	newWidth, newHeight := 800, 480
-	// newWidth, newHeight := 210, 120
-	blackImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	redImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
-	// blackImage := image.NewPaletted(image.Rect(0, 0, newWidth, newHeight), color.Palette{
-	// 	color.RGBA{255, 0, 0, 255},     // Red
-	// 	color.RGBA{0, 255, 0, 255},     // Green
-	// 	color.RGBA{0, 0, 255, 255},     // Blue
-	// 	color.RGBA{0, 0, 0, 255},       // White
-	// 	color.RGBA{255, 255, 255, 255}, // Black
-	// })
-	// blackImage := image.NewPaletted(image.Rect(0, 0, newWidth, newHeight), palette.WebSafe)
-	// draw.Draw(blackImage, blackImage.Bounds(), &image.Uniform{color.RGBA{255, 255, 255, 255}}, image.Point{}, draw.Src)
-	// addLabel(blackImage, 10, 10, "Hello, image!")
-
-	fontPath, err := findfont.Find("arial.ttf")
-
-	// dc := gg.NewContext(840, 480)
-	dc := gg.NewContextForImage(blackImage)
-	dc.SetRGB(1, 1, 1)
-	dc.Clear()
-	dc.SetRGB(0, 0, 0)
-	if err := dc.LoadFontFace(fontPath, 96); err != nil {
-		panic(err)
-	}
-	dc.DrawStringAnchored("On Air!!", float64(newWidth/2), float64(newHeight/2), 0.5, 0.5)
-
-	dc.SetRGB(0, 0, 0)
-	// left
-	// dc.DrawRectangle(0, 0, 20, float64(newHeight))
-	// dc.Fill()
-	// //top
-	// dc.DrawRectangle(0, 0, float64(newWidth), 20)
-	// dc.Fill()
-	// //right
-	// dc.DrawRectangle(float64(newWidth-20), 0, 20, float64(newHeight))
-	// dc.Fill()
-	// //bottom
-	// dc.DrawRectangle(0, float64(newHeight-20), float64(newWidth), 20)
-	// dc.Fill()
-	dc.DrawImage(blackImage, 0, 0)
-	dc.Clip()
-	resultImage := dc.Image()
-
-	outputFile, err := os.Create("output/go-black3.bmp")
-	if err != nil {
-		fmt.Println("Error creating output file:", err)
-		return
-	}
-	defer outputFile.Close()
-	err = bmp.Encode(outputFile, resultImage)
-	if err != nil {
-		fmt.Println("Error encoding output image:", err)
-		return
-	}
-
-	outputFile, err = os.Create("output/go-black3.png")
-	if err != nil {
-		fmt.Println("Error creating output file:", err)
-		return
-	}
-	err = png.Encode(outputFile, resultImage)
-	if err != nil {
-		fmt.Println("Error encoding output image:", err)
-		return
-	}
-
-	dc = gg.NewContextForImage(redImage)
+	dc := gg.NewContextForImage(redImage)
 	dc.SetRGB(1, 1, 1)
 	dc.Clear()
 	dc.SetRGB(0, 0, 0)
 	// left
-	dc.DrawRectangle(0, 0, 20, float64(newHeight))
+	dc.DrawRectangle(0, 0, 40, float64(newHeight))
 	dc.Fill()
 	//top
 	dc.DrawRectangle(0, 0, float64(newWidth), 20)
 	dc.Fill()
 	//right
-	dc.DrawRectangle(float64(newWidth-20), 0, 20, float64(newHeight))
+	dc.DrawRectangle(float64(newWidth-40), 0, 40, float64(newHeight))
 	dc.Fill()
 	//bottom
 	dc.DrawRectangle(0, float64(newHeight-20), float64(newWidth), 20)
 	dc.Fill()
-	dc.DrawImage(blackImage, 0, 0)
+	dc.DrawImage(redImage, 0, 0)
 	dc.Clip()
-	resultImage = dc.Image()
-
-	outputFile, err = os.Create("output/go-red3.png")
-	if err != nil {
-		fmt.Println("Error creating output file:", err)
-		return
-	}
-	err = png.Encode(outputFile, resultImage)
-	if err != nil {
-		fmt.Println("Error encoding output image:", err)
-		return
-	}
-
-	result := image.NewGray(resultImage.Bounds())
-	draw.Draw(result, result.Bounds(), resultImage, resultImage.Bounds().Min, draw.Src)
-
-	for y := result.Bounds().Min.Y; y < result.Bounds().Max.Y; y++ {
-		for x := result.Bounds().Min.X; x < result.Bounds().Max.X; x++ {
-			result.At(x, y)
-			// fmt.Print(result.At(x, y))
-		}
-	}
-	fmt.Println("")
-
-	outputFile, err = os.Create("output/go-red-grey1.png")
-	if err != nil {
-		fmt.Println("Error creating output file:", err)
-		return
-	}
-	err = png.Encode(outputFile, result)
-	if err != nil {
-		fmt.Println("Error encoding output image:", err)
-		return
-	}
+	return dc.Image()
 }
 
-func createBlackImage(buffer *[]color.Gray) {
+func createBlackImageData() image.Image {
 	newWidth, newHeight := 800, 480
 	blackImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	fontPath, _ := findfont.Find("arial.ttf")
@@ -169,9 +191,13 @@ func createBlackImage(buffer *[]color.Gray) {
 	dc.SetRGB(0, 0, 0)
 	dc.DrawImage(blackImage, 0, 0)
 	dc.Clip()
-	resultImage := dc.Image()
-	result := image.NewGray(resultImage.Bounds())
-	draw.Draw(result, result.Bounds(), resultImage, resultImage.Bounds().Min, draw.Src)
+	return dc.Image()
+}
+
+func greyScale(imageData image.Image) []color.Gray {
+	var raw []color.Gray
+	result := image.NewGray(imageData.Bounds())
+	draw.Draw(result, result.Bounds(), imageData, imageData.Bounds().Min, draw.Src)
 
 	var i = 0
 	for y := result.Bounds().Min.Y; y < result.Bounds().Max.Y; y++ {
@@ -179,11 +205,11 @@ func createBlackImage(buffer *[]color.Gray) {
 			result.At(x, y)
 			// fmt.Print(resultImage.At(x, y))
 			// (*buffer)[i] = result.At(x, y).(color.Gray)
-			*buffer = append(*buffer, result.At(x, y).(color.Gray))
+			raw = append(raw, result.At(x, y).(color.Gray))
 			i++
 		}
 	}
-	fmt.Println("")
+	return raw
 }
 
 func compressToXBM(xbm *[]uint8, buffer *[]color.Gray) {
@@ -199,12 +225,71 @@ func compressToXBM(xbm *[]uint8, buffer *[]color.Gray) {
 	}
 }
 
+func redLayer(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Last-Modified", "*")
+	var raw []color.Gray
+	redImageData := createRedImageData()
+	raw = greyScale(redImageData)
+
+	outputFile, err := os.Create("output/go-red-01.png")
+	if err != nil {
+		fmt.Println("Error creating output file:", err)
+		return
+	}
+	err = png.Encode(outputFile, redImageData)
+	if err != nil {
+		fmt.Println("Error encoding output image:", err)
+		return
+	}
+
+	var xbm []uint8
+	compressToXBM(&xbm, &raw)
+	outputFile, err = os.Create("output/go-red-01.xbm")
+	if err != nil {
+		fmt.Println("Error creating output file:", err)
+		return
+	}
+	defer outputFile.Close()
+	for _, pixel := range xbm {
+		// Assuming little-endian byte order for simplicity
+		binary.Write(outputFile, binary.LittleEndian, pixel)
+	}
+	// fmt.Fprintf(w, "", raw)
+	for _, pixel := range xbm {
+		// Assuming little-endian byte order for simplicity
+		binary.Write(w, binary.LittleEndian, pixel)
+	}
+	// fmt.Println("data: %v", raw)
+}
+
 func blackLayer(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Last-Modified", "*")
 	var raw []color.Gray
-	createBlackImage(&raw)
+	blackImageData := createBlackImageData()
+	raw = greyScale(blackImageData)
+	outputFile, err := os.Create("output/go-black-01.png")
+	if err != nil {
+		fmt.Println("Error creating output file:", err)
+		return
+	}
+	err = png.Encode(outputFile, blackImageData)
+	if err != nil {
+		fmt.Println("Error encoding output image:", err)
+		return
+	}
+
 	var xbm []uint8
 	compressToXBM(&xbm, &raw)
+	outputFile, err = os.Create("output/go-black-01.xbm")
+	if err != nil {
+		fmt.Println("Error creating output file:", err)
+		return
+	}
+	defer outputFile.Close()
+	for _, pixel := range xbm {
+		// Assuming little-endian byte order for simplicity
+		binary.Write(outputFile, binary.LittleEndian, pixel)
+	}
 	// fmt.Fprintf(w, "", raw)
 	for _, pixel := range xbm {
 		// Assuming little-endian byte order for simplicity
@@ -214,13 +299,14 @@ func blackLayer(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	createImages()
+	// createImages()
 	fmt.Println("Starting Server on 8090")
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/headers", headers)
 	fs := http.FileServer(http.Dir("output"))
 	http.Handle("/static/", http.StripPrefix("/static", fs))
 	http.HandleFunc("/blackLayer", blackLayer)
+	http.HandleFunc("/redLayer", redLayer)
 
 	http.ListenAndServe(":8090", nil)
 }
