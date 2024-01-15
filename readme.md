@@ -17,12 +17,16 @@ This builds an image and serves it via the go file server. Intended to be consum
 # Testing
 Sample curl:
 ### To test what the device will pull
-```curl -i -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://localhost:8090/static/go-black.bmp'```
+```curl -i -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" http://localhost:8090/static/go-black-01.xbm```
 
-```curl -i --head -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" 'http://localhost:8090/static/go-black.bmp'```
+or, more reasonably for most image viewers:
+
+```curl -i -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" http://localhost:8090/static/go-black-01.png```
+
+```curl -i --head -H "If-Modified-Since: Sun, 15 Oct 2023 00:59:39 GMT" http://localhost:8090/static/go-red-01.png```
 
 
-#Other details
+# Other details
 ## How it works
 On startup, the server listens and serves files in the last state.  Hit one of the URLs above to change the state of the images.
 
