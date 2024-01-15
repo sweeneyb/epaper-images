@@ -1,7 +1,7 @@
 
 from PIL import Image, ImageDraw, ImageFont
 
-width, height = 840, 480  # Set the dimensions of your image
+width, height = 800, 480  # Set the dimensions of your image
 background_color = (255, 255, 255)  # RGB color for the background
 
 blackImage = Image.new("RGB", (width, height), background_color)
@@ -21,11 +21,11 @@ line_width = 20
 
 redDraw = ImageDraw.Draw(redImage)
 # Draw a line from (x1, y1) to (x2, y2)
-redDraw.line([(0, 0), (840, 0)], fill=line_color, width=line_width)
-redDraw.line([(0, 480), (840, 480)], fill=line_color, width=line_width)
+redDraw.line([(0, 0), (800, 0)], fill=line_color, width=line_width)
+redDraw.line([(0, 480), (800, 480)], fill=line_color, width=line_width)
 
 redDraw.line([(0, 0), (0, 480)], fill=line_color, width=line_width)
-redDraw.line([(840, 0), (840, 480)], fill=line_color, width=line_width)
+redDraw.line([(800, 0), (800, 480)], fill=line_color, width=line_width)
 blackImage2 = blackImage.convert('P', palette=Image.Palette.ADAPTIVE, colors=1)
 redImage2 = redImage.convert('P', palette=Image.Palette.ADAPTIVE, colors=1)
 
