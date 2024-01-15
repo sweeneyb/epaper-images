@@ -28,6 +28,19 @@ func headers(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func createBlankImageData() image.Image {
+	newWidth, newHeight := 800, 480
+	theImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+	dc := gg.NewContextForImage(theImage)
+	dc.SetRGB(1, 1, 1)
+	dc.Clear()
+	// dc.SetRGB(0, 0, 0)
+	// dc.Fill()
+	dc.DrawImage(theImage, 0, 0)
+	dc.Clip()
+	return dc.Image()
+}
+
 func createRedImageData() image.Image {
 	newWidth, newHeight := 800, 480
 	redImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
@@ -52,7 +65,7 @@ func createRedImageData() image.Image {
 	return dc.Image()
 }
 
-func createBlackImageData() image.Image {
+func createBlackImageData(text string) image.Image {
 	newWidth, newHeight := 800, 480
 	blackImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	fontPath, _ := findfont.Find("arial.ttf")
@@ -64,7 +77,8 @@ func createBlackImageData() image.Image {
 	if err := dc.LoadFontFace(fontPath, 96); err != nil {
 		panic(err)
 	}
-	dc.DrawStringAnchored("On Air!!", float64(newWidth/2), float64(newHeight/2), 0.5, 0.5)
+	// dc.DrawStringAnchored("On Air!!", float64(newWidth/2), float64(newHeight/2), 0.5, 0.5)
+	dc.DrawStringAnchored(text, float64(newWidth/2), float64(newHeight/2), 0.5, 0.5)
 
 	dc.SetRGB(0, 0, 0)
 	dc.DrawImage(blackImage, 0, 0)
@@ -103,18 +117,15 @@ func compressToXBM(xbm *[]uint8, buffer *[]color.Gray) {
 	}
 }
 
-func redLayer(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Last-Modified", "*")
-	var raw []color.Gray
-	redImageData := createRedImageData()
-	raw = greyScale(redImageData)
+func redLayer(imageData image.Image) {
+	raw := greyScale(imageData)
 
 	outputFile, err := os.Create("output/go-red-01.png")
 	if err != nil {
 		fmt.Println("Error creating output file:", err)
 		return
 	}
-	err = png.Encode(outputFile, redImageData)
+	err = png.Encode(outputFile, imageData)
 	if err != nil {
 		fmt.Println("Error encoding output image:", err)
 		return
@@ -132,25 +143,16 @@ func redLayer(w http.ResponseWriter, req *http.Request) {
 		// Assuming little-endian byte order for simplicity
 		binary.Write(outputFile, binary.LittleEndian, pixel)
 	}
-	// fmt.Fprintf(w, "", raw)
-	for _, pixel := range xbm {
-		// Assuming little-endian byte order for simplicity
-		binary.Write(w, binary.LittleEndian, pixel)
-	}
-	// fmt.Println("data: %v", raw)
 }
 
-func blackLayer(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("Last-Modified", "*")
-	var raw []color.Gray
-	blackImageData := createBlackImageData()
-	raw = greyScale(blackImageData)
+func blackLayer(imageData image.Image) {
+	raw := greyScale(imageData)
 	outputFile, err := os.Create("output/go-black-01.png")
 	if err != nil {
 		fmt.Println("Error creating output file:", err)
 		return
 	}
-	err = png.Encode(outputFile, blackImageData)
+	err = png.Encode(outputFile, imageData)
 	if err != nil {
 		fmt.Println("Error encoding output image:", err)
 		return
@@ -168,23 +170,38 @@ func blackLayer(w http.ResponseWriter, req *http.Request) {
 		// Assuming little-endian byte order for simplicity
 		binary.Write(outputFile, binary.LittleEndian, pixel)
 	}
-	// fmt.Fprintf(w, "", raw)
-	for _, pixel := range xbm {
-		// Assuming little-endian byte order for simplicity
-		binary.Write(w, binary.LittleEndian, pixel)
-	}
-	// fmt.Println("data: %v", raw)
+}
+
+func clear(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Last-Modified", "*")
+	redLayer(createBlankImageData())
+	blackLayer(createBlankImageData())
+	w.WriteHeader(200)
+}
+
+func onAir(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Last-Modified", "*")
+	redLayer(createRedImageData())
+	blackLayer(createBlackImageData("On Air!!"))
+	w.WriteHeader(200)
+}
+
+func offAir(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Last-Modified", "*")
+	redLayer(createBlankImageData())
+	blackLayer(createBlackImageData("Off Air."))
+	w.WriteHeader(200)
 }
 
 func main() {
-	// createImages()
 	fmt.Println("Starting Server on 8090")
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/headers", headers)
 	fs := http.FileServer(http.Dir("output"))
 	http.Handle("/static/", http.StripPrefix("/static", fs))
-	http.HandleFunc("/blackLayer", blackLayer)
-	http.HandleFunc("/redLayer", redLayer)
+	http.HandleFunc("/clear", clear)
+	http.HandleFunc("/onAir", onAir)
+	http.HandleFunc("/offAir", offAir)
 
 	http.ListenAndServe(":8090", nil)
 }
